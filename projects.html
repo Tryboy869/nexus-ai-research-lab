@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects - NEXUS AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+    }
+    
+    .navbar {
+      background: #1a1a24;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a2a34;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #6b8cff;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    
+    .navbar-menu {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    .navbar-menu a {
+      color: #9090a8;
+      text-decoration: none;
+    }
+    
+    .navbar-menu a:hover {
+      color: #6b8cff;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    h1 {
+      font-size: 36px;
+      margin-bottom: 30px;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .filter-btn {
+      padding: 10px 20px;
+      background: #1a1a24;
+      color: #9090a8;
+      border: 1px solid #2a2a34;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-btn.active {
+      background: #6b8cff;
+      color: white;
+      border-color: #6b8cff;
+    }
+    
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+    
+    .project-card {
+      background: #1a1a24;
+      border-radius: 16px;
+      padding: 25px;
+      border: 1px solid #2a2a34;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .project-card:hover {
+      transform: translateY(-5px);
+      border-color: #6b8cff;
+    }
+    
+    .project-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    
+    .status-completed {
+      background: #70d6a3;
+      color: #0a0a0f;
+    }
+    
+    .status-running {
+      background: #6b8cff;
+      color: white;
+    }
+    
+    .project-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #e8e8f0;
+    }
+    
+    .project-meta {
+      color: #9090a8;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+    
+    .project-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+      background: #2a2a34;
+      color: #e8e8f0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #9090a8;
+    }
+    
+    .empty-state i {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">
+      <i class="fas fa-atom"></i>
+      <span>NEXUS</span>
+    </a>
+    
+    <div class="navbar-menu">
+      <a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="/lab"><i class="fas fa-flask"></i> Lab</a>
+      <a href="/projects"><i class="fas fa-folder"></i> Projects</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <h1>📁 My Projects</h1>
+    
+    <div class="filters">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Running</button>
+      <button class="filter-btn">Completed</button>
+      <button class="filter-btn">Archived</button>
+    </div>
+    
+    <div class="projects-grid" id="projectsGrid">
+      <div class="empty-state">
+        <i class="fas fa-folder-open"></i>
+        <h3>No projects yet</h3>
+        <p>Start your first research in the Lab</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>
