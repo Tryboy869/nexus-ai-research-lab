@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results - NEXUS AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+    }
+    
+    .navbar {
+      background: #1a1a24;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a2a34;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #6b8cff;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    .result-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    .result-header h1 {
+      font-size: 42px;
+      margin-bottom: 15px;
+      color: #70d6a3;
+    }
+    
+    .result-card {
+      background: #1a1a24;
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 2px solid #70d6a3;
+    }
+    
+    .result-section {
+      margin-bottom: 30px;
+    }
+    
+    .result-section h3 {
+      color: #6b8cff;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+    
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .spec-item {
+      background: #0a0a0f;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    
+    .spec-label {
+      color: #9090a8;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+    
+    .spec-value {
+      color: #e8e8f0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .btn {
+      padding: 14px 28px;
+      background: #6b8cff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: 15px;
+    }
+    
+    .btn:hover {
+      background: #5a7be8;
+      transform: translateY(-2px);
+    }
+    
+    .btn-success {
+      background: #70d6a3;
+    }
+    
+    .btn-secondary {
+      background: #9090a8;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">
+      <i class="fas fa-atom"></i>
+      <span>NEXUS</span>
+    </a>
+  </nav>
+  
+  <div class="container">
+    <div class="result-header">
+      <h1>✅ Solution Found!</h1>
+      <p>AI research completed successfully</p>
+    </div>
+    
+    <div class="result-card">
+      <div class="result-section">
+        <h3>Best Design</h3>
+        <p id="bestDesign">Loading...</p>
+      </div>
+      
+      <div class="result-section">
+        <h3>Performance Metrics</h3>
+        <div class="specs-grid" id="metricsGrid"></div>
+      </div>
+      
+      <div class="result-section">
+        <h3>AI Analysis</h3>
+        <p id="aiAnalysis">Loading...</p>
+      </div>
+      
+      <div class="result-section">
+        <h3>Actions</h3>
+        <button class="btn btn-success" onclick="downloadPDF()">
+          <i class="fas fa-file-pdf"></i> Download PDF Report
+        </button>
+        <button class="btn" onclick="window.location.href='/lab'">
+          <i class="fas fa-redo"></i> New Research
+        </button>
+        <button class="btn btn-secondary" onclick="window.location.href='/dashboard'">
+          <i class="fas fa-home"></i> Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function downloadPDF() {
+      alert('PDF generation not implemented yet');
+    }
+  </script>
+</body>
+</html>
