@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - NEXUS AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+    }
+    
+    .navbar {
+      background: #1a1a24;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a2a34;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #6b8cff;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    
+    .navbar-menu {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    .navbar-menu a {
+      color: #9090a8;
+      text-decoration: none;
+    }
+    
+    .navbar-menu a:hover {
+      color: #6b8cff;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    h1 {
+      font-size: 36px;
+      margin-bottom: 40px;
+    }
+    
+    .api-provider {
+      background: #1a1a24;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid #2a2a34;
+    }
+    
+    .provider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .provider-name {
+      font-size: 22px;
+      font-weight: 600;
+      color: #6b8cff;
+    }
+    
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-configured {
+      background: #70d6a3;
+      color: #0a0a0f;
+    }
+    
+    .status-notconfigured {
+      background: #ff5555;
+      color: white;
+    }
+    
+    label {
+      display: block;
+      color: #9090a8;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 14px;
+      background: #0a0a0f;
+      border: 2px solid #2a2a34;
+      border-radius: 10px;
+      color: #e8e8f0;
+      font-size: 16px;
+      margin-bottom: 15px;
+      font-family: 'Monaco', monospace;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #6b8cff;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      background: #6b8cff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+      background: #5a7be8;
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .alert-success {
+      background: rgba(112, 214, 163, 0.1);
+      color: #70d6a3;
+      border: 1px solid #70d6a3;
+    }
+    
+    .alert-error {
+      background: rgba(255, 85, 85, 0.1);
+      color: #ff5555;
+      border: 1px solid #ff5555;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .help-text {
+      font-size: 13px;
+      color: #9090a8;
+      margin-top: -10px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">
+      <i class="fas fa-atom"></i>
+      <span>NEXUS</span>
+    </a>
+    
+    <div class="navbar-menu">
+      <a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="/lab"><i class="fas fa-flask"></i> Lab</a>
+      <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <h1>⚙️ API Configuration</h1>
+    
+    <div id="alertContainer"></div>
+    
+    <!-- Groq -->
+    <div class="api-provider">
+      <div class="provider-header">
+        <div class="provider-name">Groq</div>
+        <span class="status-badge status-notconfigured" id="status-groq">Not Configured</span>
+      </div>
+      
+      <label for="groq-key">API Key</label>
+      <input type="password" id="groq-key" placeholder="gsk_...">
+      <div class="help-text">Get your key at <a href="https://console.groq.com" target="_blank" style="color: #6b8cff;">console.groq.com</a></div>
+      
+      <button class="btn" onclick="saveKey('groq')">
+        <i class="fas fa-save"></i> Save Groq Key
+      </button>
+    </div>
+    
+    <!-- Anthropic -->
+    <div class="api-provider">
+      <div class="provider-header">
+        <div class="provider-name">Anthropic (Claude)</div>
+        <span class="status-badge status-notconfigured" id="status-anthropic">Not Configured</span>
+      </div>
+      
+      <label for="anthropic-key">API Key</label>
+      <input type="password" id="anthropic-key" placeholder="sk-ant-...">
+      <div class="help-text">Get your key at <a href="https://console.anthropic.com" target="_blank" style="color: #6b8cff;">console.anthropic.com</a></div>
+      
+      <button class="btn" onclick="saveKey('anthropic')">
+        <i class="fas fa-save"></i> Save Claude Key
+      </button>
+    </div>
+    
+    <!-- OpenAI -->
+    <div class="api-provider">
+      <div class="provider-header">
+        <div class="provider-name">OpenAI (GPT-4)</div>
+        <span class="status-badge status-notconfigured" id="status-openai">Not Configured</span>
+      </div>
+      
+      <label for="openai-key">API Key</label>
+      <input type="password" id="openai-key" placeholder="sk-...">
+      <div class="help-text">Get your key at <a href="https://platform.openai.com" target="_blank" style="color: #6b8cff;">platform.openai.com</a></div>
+      
+      <button class="btn" onclick="saveKey('openai')">
+        <i class="fas fa-save"></i> Save OpenAI Key
+      </button>
+    </div>
+  </div>
+  
+  <script>
+    function showAlert(message, type = 'success') {
+      const container = document.getElementById('alertContainer');
+      container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+      setTimeout(() => container.innerHTML = '', 5000);
+    }
+    
+    async function saveKey(provider) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      const input = document.getElementById(`${provider}-key`);
+      const apiKey = input.value.trim();
+      
+      if (!apiKey) {
+        showAlert('Please enter an API key', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/keys/save', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ provider, apiKey })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showAlert(`${provider.toUpperCase()} API key saved successfully!`, 'success');
+          document.getElementById(`status-${provider}`).textContent = 'Configured';
+          document.getElementById(`status-${provider}`).className = 'status-badge status-configured';
+          input.value = '';
+        } else {
+          showAlert(`Failed to save key: ${data.message}`, 'error');
+        }
+      } catch (error) {
+        showAlert('Error saving API key', 'error');
+      }
+    }
+    
+    async function loadKeys() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/keys/list', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          data.keys.forEach(key => {
+            document.getElementById(`status-${key.provider}`).textContent = 'Configured';
+            document.getElementById(`status-${key.provider}`).className = 'status-badge status-configured';
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load keys:', error);
+      }
+    }
+    
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+    
+    loadKeys();
+  </script>
+</body>
+</html>
