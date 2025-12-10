@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Laboratory - NEXUS AI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Monaco', 'Courier New', monospace;
+      background: #0a0a0f;
+      color: #e8e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .header {
+      background: #1a1a24;
+      padding: 15px 20px;
+      border-bottom: 2px solid #2a2a34;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      color: #6b8cff;
+    }
+    
+    .status {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      color: #9090a8;
+    }
+    
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #70d6a3;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .main-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    
+    .left-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #2a2a34;
+    }
+    
+    .right-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .panel-header {
+      background: #1a1a24;
+      padding: 10px 15px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b8cff;
+      border-bottom: 1px solid #2a2a34;
+    }
+    
+    .code-editor {
+      flex: 1;
+      padding: 15px;
+      background: #0a0a0f;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    #codeInput {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      color: #e8e8f0;
+      font-family: inherit;
+      font-size: inherit;
+      resize: none;
+      outline: none;
+    }
+    
+    .code-actions {
+      background: #1a1a24;
+      padding: 10px 15px;
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid #2a2a34;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .btn-execute {
+      background: #6b8cff;
+      color: white;
+    }
+    
+    .btn-execute:hover {
+      background: #5a7be8;
+    }
+    
+    .btn-edit {
+      background: #ffb86c;
+      color: white;
+    }
+    
+    .btn-delete {
+      background: #ff5555;
+      color: white;
+    }
+    
+    .btn-save {
+      background: #70d6a3;
+      color: white;
+    }
+    
+    .output-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      background: #0a0a0f;
+    }
+    
+    .output-entry {
+      margin-bottom: 15px;
+      padding: 12px;
+      background: #1a1a24;
+      border-radius: 8px;
+      border-left: 4px solid #6b8cff;
+      font-size: 13px;
+    }
+    
+    .output-entry.error {
+      border-left-color: #ff5555;
+      background: rgba(255, 85, 85, 0.1);
+    }
+    
+    .output-entry.success {
+      border-left-color: #70d6a3;
+    }
+    
+    .output-timestamp {
+      color: #9090a8;
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+    
+    .output-content {
+      color: #e8e8f0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    
+    .visual-canvas {
+      flex: 1;
+      background: #0a0a0f;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #svgCanvas {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .object-list {
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 15px;
+      background: #1a1a24;
+      border-top: 1px solid #2a2a34;
+    }
+    
+    .object-item {
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background: #0a0a0f;
+      border-radius: 6px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .object-id {
+      color: #6b8cff;
+      font-weight: 600;
+    }
+    
+    .object-type {
+      color: #9090a8;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🧪 Universal Laboratory - NEXUS REPL</h1>
+    <div class="status">
+      <div class="status-item">
+        <div class="status-dot"></div>
+        <span>Cores: <span id="coresStatus">6/6</span></span>
+      </div>
+      <div class="status-item">
+        <span>Objects: <span id="objectsCount">0</span></span>
+      </div>
+      <div class="status-item">
+        <span>Tests: <span id="testsCount">0</span></span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="main-container">
+    <!-- LEFT: CODE EDITOR (KEYBOARD) -->
+    <div class="left-panel">
+      <div class="panel-header">⌨️ Code Editor (AI Keyboard Input)</div>
+      <div class="code-editor">
+        <textarea id="codeInput" placeholder="// AI writes JavaScript code here...
+// Example:
+const lens = createMicroLens({
+  material: 'glass',
+  focal_length: 5,
+  diameter: 2
+});
+
+testOpticalPerformance(lens);"></textarea>
+      </div>
+      <div class="code-actions">
+        <button class="btn btn-execute" onclick="executeCode()">
+          ▶️ Execute
+        </button>
+        <button class="btn btn-edit" onclick="editLastCode()">
+          ✏️ Edit
+        </button>
+        <button class="btn btn-delete" onclick="clearCode()">
+          🗑️ Delete
+        </button>
+        <button class="btn btn-save" onclick="saveSnapshot()">
+          💾 Save
+        </button>
+      </div>
+      
+      <div class="panel-header">📊 Console Output (AI Screen)</div>
+      <div class="output-container" id="outputContainer">
+        <div class="output-entry success">
+          <div class="output-timestamp">System Ready</div>
+          <div class="output-content">Universal Laboratory initialized
+6 CPU cores active (2 render + 4 compute)
+Ready to execute code...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- RIGHT: VISUAL + OBJECTS -->
+    <div class="right-panel">
+      <div class="panel-header">🎨 Visual Simulator (SVG Rendering)</div>
+      <div class="visual-canvas">
+        <svg id="svgCanvas" viewBox="0 0 1000 800">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          
+          <text x="500" y="400" text-anchor="middle" fill="#9090a8" font-size="24">
+            Waiting for objects...
+          </text>
+        </svg>
+      </div>
+      
+      <div class="panel-header">📦 Created Objects</div>
+      <div class="object-list" id="objectsList">
+        <div style="color: #9090a8; text-align: center; padding: 20px;">
+          No objects created yet
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // UNIVERSAL LABORATORY - CPU-LIKE 6 CORES
+    // ═══════════════════════════════════════════════════════════
+    
+    class UniversalLaboratory {
+      constructor() {
+        // 6 CPU Cores (2 render + 4 compute)
+        this.cores = {
+          render: this.createRenderCores(2),
+          compute: this.createComputeCores(4)
+        };
+        
+        // Memory
+        this.objects = new Map();
+        this.history = [];
+        this.lastCode = '';
+        this.testsRun = 0;
+        
+        // WebSocket connection to backend
+        this.ws = null;
+        this.connectToBackend();
+        
+        console.log('✅ Universal Laboratory initialized');
+        this.updateStatus();
+      }
+      
+      createRenderCores(count) {
+        const cores = [];
+        const workerCode = `
+          self.onmessage = function(e) {
+            const { type, object } = e.data;
+            
+            if (type === 'RENDER') {
+              // Simulate rendering work
+              const renderTime = Math.random() * 50 + 10;
+              setTimeout(() => {
+                self.postMessage({
+                  success: true,
+                  rendered: true,
+                  svg: generateSVG(object)
+                });
+              }, renderTime);
+            }
+          };
+          
+          function generateSVG(obj) {
+            return {
+              type: obj.type,
+              x: Math.random() * 800 + 100,
+              y: Math.random() * 600 + 100,
+              color: '#6b8cff'
+            };
+          }
+        `;
+        
+        for (let i = 0; i < count; i++) {
+          const blob = new Blob([workerCode], { type: 'application/javascript' });
+          const worker = new Worker(URL.createObjectURL(blob));
+          cores.push({ id: `render_${i}`, worker, busy: false });
+        }
+        
+        return cores;
+      }
+      
+      createComputeCores(count) {
+        const cores = [];
+        const workerCode = `
+          self.onmessage = function(e) {
+            const { type, task } = e.data;
+            
+            switch(type) {
+              case 'PHYSICS':
+                self.postMessage(calculatePhysics(task));
+                break;
+              case 'COMPATIBILITY':
+                self.postMessage(testCompatibility(task));
+                break;
+              case 'AGING':
+                self.postMessage(simulateAging(task));
+                break;
+              case 'PERFORMANCE':
+                self.postMessage(testPerformance(task));
+                break;
+            }
+          };
+          
+          function calculatePhysics(task) {
+            // Intensive calculations
+            let result = 0;
+            for (let i = 0; i < 1000000; i++) {
+              result += Math.sqrt(i) * task.factor;
+            }
+            return { success: true, result: result % 100 };
+          }
+          
+          function testCompatibility(task) {
+            const compatible = Math.random() > 0.3;
+            return {
+              success: true,
+              compatible,
+              failure_mode: compatible ? null : ['CRACK', 'BURN', 'MALFUNCTION'][Math.floor(Math.random() * 3)]
+            };
+          }
+          
+          function simulateAging(task) {
+            const degradation = task.years * 0.8 + Math.random() * 5;
+            return {
+              success: true,
+              degradation: Math.min(degradation, 100),
+              still_functional: degradation < 30
+            };
+          }
+          
+          function testPerformance(task) {
+            return {
+              success: true,
+              score: Math.random() * 100,
+              efficiency: Math.random() * 0.5 + 0.5
+            };
+          }
+        `;
+        
+        for (let i = 0; i < count; i++) {
+          const blob = new Blob([workerCode], { type: 'application/javascript' });
+          const worker = new Worker(URL.createObjectURL(blob));
+          cores.push({ id: `compute_${i}`, worker, busy: false });
+        }
+        
+        return cores;
+      }
+      
+      // Execute AI-written code
+      async executeCode(code) {
+        this.lastCode = code;
+        this.history.push({ code, timestamp: Date.now() });
+        
+        try {
+          // Create sandbox with lab functions
+          const sandbox = this.createSandbox();
+          
+          // Execute code in sandbox
+          const result = await sandbox.eval(code);
+          
+          this.addOutput('success', result);
+          return { success: true, result };
+        } catch (error) {
+          this.addOutput('error', error.message);
+          return { success: false, error: error.message };
+        }
+      }
+      
+      createSandbox() {
+        const self = this;
+        
+        return {
+          eval: async function(code) {
+            // Expose lab functions to AI
+            const createMicroLens = (props) => self.createObject('micro_lens', props);
+            const createSensor = (props) => self.createObject('sensor', props);
+            const createCircuit = (props) => self.createObject('circuit', props);
+            const assembleParts = (...parts) => self.assembleParts(parts);
+            const testOpticalPerformance = (obj) => self.testPerformance(obj, 'optical');
+            const testCompatibility = (...objs) => self.testCompatibility(objs);
+            const simulateAging = (obj, years) => self.simulateAging(obj, years);
+            const modifyObject = (id, props) => self.modifyObject(id, props);
+            const getObject = (id) => self.objects.get(id);
+            const listObjects = () => Array.from(self.objects.values());
+            
+            // Execute with safe eval
+            return eval(code);
+          }
+        };
+      }
+      
+      // Create virtual object
+      createObject(type, properties) {
+        const obj = {
+          id: `obj_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+          type,
+          properties,
+          created_at: Date.now(),
+          state: 'active'
+        };
+        
+        // Render via core
+        this.renderObject(obj);
+        
+        this.objects.set(obj.id, obj);
+        this.updateStatus();
+        this.addObjectToList(obj);
+        
+        return obj;
+      }
+      
+      async renderObject(obj) {
+        const availableCore = this.cores.render.find(c => !c.busy);
+        if (!availableCore) return;
+        
+        availableCore.busy = true;
+        
+        return new Promise((resolve) => {
+          availableCore.worker.onmessage = (e) => {
+            if (e.data.success) {
+              this.drawSVG(obj, e.data.svg);
+            }
+            availableCore.busy = false;
+            resolve(e.data);
+          };
+          
+          availableCore.worker.postMessage({ type: 'RENDER', object: obj });
+        });
+      }
+      
+      drawSVG(obj, svgData) {
+        const svg = document.getElementById('svgCanvas');
+        
+        // Clear placeholder
+        const placeholder = svg.querySelector('text');
+        if (placeholder) placeholder.remove();
+        
+        // Create SVG element
+        const shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        shape.setAttribute('cx', svgData.x);
+        shape.setAttribute('cy', svgData.y);
+        shape.setAttribute('r', 20);
+        shape.setAttribute('fill', svgData.color);
+        shape.setAttribute('filter', 'url(#glow)');
+        shape.setAttribute('data-id', obj.id);
+        
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', svgData.x);
+        label.setAttribute('y', svgData.y - 30);
+        label.setAttribute('text-anchor', 'middle');
+        label.setAttribute('fill', '#e8e8f0');
+        label.setAttribute('font-size', '12');
+        label.textContent = obj.type;
+        
+        svg.appendChild(shape);
+        svg.appendChild(label);
+      }
+      
+      async testPerformance(obj, testType) {
+        this.testsRun++;
+        this.updateStatus();
+        
+        const availableCore = this.cores.compute.find(c => !c.busy);
+        if (!availableCore) return { success: false, error: 'No cores available' };
+        
+        availableCore.busy = true;
+        
+        return new Promise((resolve) => {
+          availableCore.worker.onmessage = (e) => {
+            availableCore.busy = false;
+            resolve(e.data);
+          };
+          
+          availableCore.worker.postMessage({
+            type: 'PERFORMANCE',
+            task: { object: obj, testType }
+          });
+        });
+      }
+      
+      async testCompatibility(objects) {
+        this.testsRun++;
+        this.updateStatus();
+        
+        const availableCore = this.cores.compute.find(c => !c.busy);
+        if (!availableCore) return { success: false, error: 'No cores available' };
+        
+        availableCore.busy = true;
+        
+        return new Promise((resolve) => {
+          availableCore.worker.onmessage = (e) => {
+            availableCore.busy = false;
+            resolve(e.data);
+          };
+          
+          availableCore.worker.postMessage({
+            type: 'COMPATIBILITY',
+            task: { objects }
+          });
+        });
+      }
+      
+      async simulateAging(obj, years) {
+        this.testsRun++;
+        this.updateStatus();
+        
+        const availableCore = this.cores.compute.find(c => !c.busy);
+        if (!availableCore) return { success: false, error: 'No cores available' };
+        
+        availableCore.busy = true;
+        
+        return new Promise((resolve) => {
+          availableCore.worker.onmessage = (e) => {
+            availableCore.busy = false;
+            resolve(e.data);
+          };
+          
+          availableCore.worker.postMessage({
+            type: 'AGING',
+            task: { object: obj, years }
+          });
+        });
+      }
+      
+      modifyObject(id, newProps) {
+        const obj = this.objects.get(id);
+        if (!obj) return { success: false, error: 'Object not found' };
+        
+        Object.assign(obj.properties, newProps);
+        return obj;
+      }
+      
+      assembleParts(parts) {
+        const assembly = {
+          id: `assembly_${Date.now()}`,
+          type: 'assembly',
+          parts: parts.map(p => p.id),
+          created_at: Date.now()
+        };
+        
+        this.objects.set(assembly.id, assembly);
+        this.updateStatus();
+        
+        return assembly;
+      }
+      
+      addOutput(type, content) {
+        const container = document.getElementById('outputContainer');
+        const entry = document.createElement('div');
+        entry.className = `output-entry ${type}`;
+        
+        const timestamp = document.createElement('div');
+        timestamp.className = 'output-timestamp';
+        timestamp.textContent = new Date().toLocaleTimeString();
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'output-content';
+        contentDiv.textContent = typeof content === 'object' ? JSON.stringify(content, null, 2) : content;
+        
+        entry.appendChild(timestamp);
+        entry.appendChild(contentDiv);
+        container.appendChild(entry);
+        container.scrollTop = container.scrollHeight;
+      }
+      
+      addObjectToList(obj) {
+        const list = document.getElementById('objectsList');
+        
+        // Remove placeholder
+        if (list.querySelector('div[style]')) {
+          list.innerHTML = '';
+        }
+        
+        const item = document.createElement('div');
+        item.className = 'object-item';
+        item.innerHTML = `
+          <span class="object-id">${obj.id}</span>
+          <span class="object-type">${obj.type}</span>
+        `;
+        
+        list.appendChild(item);
+      }
+      
+      updateStatus() {
+        document.getElementById('objectsCount').textContent = this.objects.size;
+        document.getElementById('testsCount').textContent = this.testsRun;
+        
+        const busyCores = [
+          ...this.cores.render.filter(c => c.busy),
+          ...this.cores.compute.filter(c => c.busy)
+        ].length;
+        
+        document.getElementById('coresStatus').textContent = `${6 - busyCores}/6`;
+      }
+      
+      connectToBackend() {
+        // WebSocket connection
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        this.ws = new WebSocket(`${protocol}//${window.location.host}`);
+        
+        this.ws.onopen = () => {
+          console.log('✅ Connected to backend');
+        };
+        
+        this.ws.onmessage = async (event) => {
+          const data = JSON.parse(event.data);
+          
+          if (data.type === 'EXECUTE_CODE') {
+            const result = await this.executeCode(data.code);
+            this.ws.send(JSON.stringify({
+              type: 'CODE_RESULT',
+              result
+            }));
+          }
+          
+          if (data.type === 'GET_OUTPUT') {
+            this.ws.send(JSON.stringify({
+              type: 'OUTPUT',
+              output: this.getLastOutput()
+            }));
+          }
+        };
+      }
+      
+      getLastOutput() {
+        const container = document.getElementById('outputContainer');
+        const lastEntry = container.lastElementChild;
+        if (!lastEntry) return null;
+        
+        return {
+          type: lastEntry.classList.contains('error') ? 'error' : 'success',
+          content: lastEntry.querySelector('.output-content').textContent
+        };
+      }
+    }
+    
+    // Initialize Laboratory
+    const lab = new UniversalLaboratory();
+    
+    // Expose global functions for UI
+    async function executeCode() {
+      const code = document.getElementById('codeInput').value;
+      if (!code.trim()) return;
+      
+      await lab.executeCode(code);
+    }
+    
+    function editLastCode() {
+      if (lab.lastCode) {
+        document.getElementById('codeInput').value = lab.lastCode;
+      }
+    }
+    
+    function clearCode() {
+      document.getElementById('codeInput').value = '';
+    }
+    
+    function saveSnapshot() {
+      const snapshot = {
+        objects: Array.from(lab.objects.values()),
+        history: lab.history,
+        timestamp: Date.now()
+      };
+      
+      const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lab-snapshot-${Date.now()}.json`;
+      a.click();
+      
+      lab.addOutput('success', 'Snapshot saved!');
+    }
+    
+    // Keyboard shortcuts
+    document.getElementById('codeInput').addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        executeCode();
+      }
+    });
+  </script>
+</body>
+</html>
