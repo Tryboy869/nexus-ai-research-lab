@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - NEXUS AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+    }
+    
+    .navbar {
+      background: #1a1a24;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a2a34;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #6b8cff;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    
+    .navbar-menu {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .navbar-menu a {
+      color: #9090a8;
+      text-decoration: none;
+    }
+    
+    .navbar-menu a:hover {
+      color: #6b8cff;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    h1 {
+      font-size: 36px;
+      margin-bottom: 30px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    
+    .stat-card {
+      background: #1a1a24;
+      border-radius: 16px;
+      padding: 25px;
+      border-left: 4px solid #6b8cff;
+    }
+    
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #6b8cff;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      color: #9090a8;
+      font-size: 14px;
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .action-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 30px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      text-decoration: none;
+      color: white;
+    }
+    
+    .action-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .action-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">
+      <i class="fas fa-atom"></i>
+      <span>NEXUS</span>
+    </a>
+    
+    <div class="navbar-menu">
+      <a href="/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="/lab"><i class="fas fa-flask"></i> Lab</a>
+      <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <h1>Welcome back, <span id="userName">User</span>!</h1>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-research">0</div>
+        <div class="stat-label">Active Researches</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-value" id="stat-solutions">0</div>
+        <div class="stat-label">Solutions Found</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-value" id="stat-compute">0h</div>
+        <div class="stat-label">Compute Time</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-value" id="stat-apis">0</div>
+        <div class="stat-label">AI Providers</div>
+      </div>
+    </div>
+    
+    <div class="quick-actions">
+      <a href="/lab" class="action-card">
+        <div class="action-icon"><i class="fas fa-rocket"></i></div>
+        <h3>New Research</h3>
+        <p>Start AI-powered research</p>
+      </a>
+      
+      <a href="/collaborative" class="action-card">
+        <div class="action-icon"><i class="fas fa-users"></i></div>
+        <h3>Multi-AI Lab</h3>
+        <p>Multiple AIs working together</p>
+      </a>
+      
+      <a href="/settings" class="action-card">
+        <div class="action-icon"><i class="fas fa-cog"></i></div>
+        <h3>Configure APIs</h3>
+        <p>Connect AI providers</p>
+      </a>
+    </div>
+  </div>
+  
+  <script>
+    async function checkAuth() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('userName').textContent = user.name || user.email || 'User';
+    }
+    
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+    
+    checkAuth();
+  </script>
+</body>
+</html>
