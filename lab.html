@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Lab - NEXUS AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+    }
+    
+    .navbar {
+      background: #1a1a24;
+      padding: 20px 40px;
+      border-bottom: 1px solid #2a2a34;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .navbar-brand {
+      color: #6b8cff;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    .header h1 {
+      font-size: 42px;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #6b8cff 0%, #ff6b9d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .config-card {
+      background: #1a1a24;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+    
+    .config-card h3 {
+      color: #6b8cff;
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      color: #9090a8;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    textarea, input, select {
+      width: 100%;
+      padding: 14px;
+      background: #0a0a0f;
+      border: 2px solid #2a2a34;
+      border-radius: 10px;
+      color: #e8e8f0;
+      font-size: 16px;
+      margin-bottom: 20px;
+      font-family: inherit;
+    }
+    
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+    
+    .btn {
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #6b8cff 0%, #ff6b9d 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand"><i class="fas fa-atom"></i> NEXUS</a>
+    <div>
+      <a href="/dashboard" style="color: #9090a8; text-decoration: none; margin-right: 20px;">Dashboard</a>
+      <a href="/settings" style="color: #9090a8; text-decoration: none;">Settings</a>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="header">
+      <h1>AI Research Laboratory</h1>
+      <p>Define your problem, configure AI, launch research</p>
+    </div>
+    
+    <div class="config-card">
+      <h3>1. Research Problem</h3>
+      <label>Describe what you want to solve</label>
+      <textarea id="problem" placeholder="Example: Design an optimal heat dissipator for smartphones..."></textarea>
+      
+      <label>Constraints (optional)</label>
+      <textarea id="constraints" placeholder="Budget < 2€, Weight < 5g..."></textarea>
+    </div>
+    
+    <div class="config-card">
+      <h3>2. AI Configuration</h3>
+      <label>AI Provider</label>
+      <select id="provider">
+        <option value="groq">Groq (LLama 3.3 70B)</option>
+        <option value="anthropic">Anthropic (Claude Sonnet 4)</option>
+        <option value="openai">OpenAI (GPT-4o)</option>
+      </select>
+      
+      <label>Number of AIs (1-10)</label>
+      <input type="number" id="numAIs" min="1" max="10" value="1">
+    </div>
+    
+    <button class="btn" onclick="startResearch()">
+      <i class="fas fa-rocket"></i>
+      <span>Launch Research</span>
+    </button>
+  </div>
+  
+  <script>
+    async function startResearch() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      const problem = document.getElementById('problem').value.trim();
+      if (!problem) {
+        alert('Please describe your problem');
+        return;
+      }
+      
+      const provider = document.getElementById('provider').value;
+      
+      // Open simulator
+      window.open('/simulator', 'simulator', 'width=1400,height=900');
+      
+      // TODO: Connect WebSocket
+      alert('Simulator opened! (WebSocket connection to be implemented)');
+    }
+  </script>
+</body>
+</html>
