@@ -1,0 +1,37 @@
+{
+  "name": "nexus-ai-research-lab",
+  "version": "1.0.0",
+  "description": "NEXUS AI Research Lab - Multi-provider IA research platform",
+  "type": "module",
+  "main": "api.js",
+  "scripts": {
+    "start": "node api.js",
+    "dev": "nodemon api.js"
+  },
+  "keywords": [
+    "ai",
+    "research",
+    "groq",
+    "anthropic",
+    "openai",
+    "simulation"
+  ],
+  "author": "Anzize Daouda",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@libsql/client": "^0.14.0",
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "groq-sdk": "^0.8.0",
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^4.77.3",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
